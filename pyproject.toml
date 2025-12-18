@@ -9,6 +9,7 @@ dependencies = [
     "galileo[otel]",
     "python-dotenv",
     "traceloop-sdk",
+    "truststore",
 ]
 
 [project.optional-dependencies]

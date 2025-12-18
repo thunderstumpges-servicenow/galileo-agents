@@ -1,6 +1,7 @@
 """Research Crew - Researcher and Analyst agents with knowledge base search."""
 import os
 import sys
+import truststore
 
 from crewai import Crew, LLM, Task
 from crewai.tools import tool
@@ -14,6 +15,7 @@ from agents import create_analyst_agent, create_researcher_agent
 from shared import logger
 from tools import create_knowledge_retriever, search_knowledge_base
 
+truststore.inject_into_ssl()
 load_dotenv()
 
 Traceloop.init(

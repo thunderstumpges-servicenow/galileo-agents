@@ -1,6 +1,7 @@
 """Calculator Agent - Performs calculations and unit conversions."""
 import os
 import sys
+import truststore
 
 from dotenv import load_dotenv
 from langchain.agents import create_agent
@@ -14,7 +15,13 @@ from prompt import CALCULATOR_AGENT_SYSTEM_PROMPT
 from shared import logger
 from tools import calculate, convert_units
 
+truststore.inject_into_ssl()
+
+os.environ["OTEL_EXPORTER_OTLP_INSECURE"] = "true"
+
 load_dotenv()
+
+os.environ["OTEL_EXPORTER_OTLP_INSECURE"] = "true"
 
 Traceloop.init(
     app_name="calculator-agent",
@@ -59,6 +66,12 @@ def create_calculator_agent():
 def main(query: str = "Convert 100 km to mi"):
     logger.info(f"Calculator Agent - Query: {query}")
     agent = create_calculator_agent()
+
+    current_span = trace.get_current_span()
+    # Add attributes to the current span
+    current_span.set_attribute("gen_ai.agent.id", "thunder-calculator-agent-langgraph")
+    current_span.set_attribute("discovery.ci", "thunder-calculator-agent-langgraph")
+
     result = agent.invoke({"messages": [("user", query)]})
     response = result["messages"][-1].content
     logger.info(f"Response: {response}")
